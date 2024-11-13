@@ -12,10 +12,14 @@ var timer = setInterval(main, fps)
 
 
 
-var avatar = new GameObject();
-avatar.color = `#ff0099`;
-avatar.vx = 2;
-avatar.vy = 2;
+  //avatar but doesn't work
+  var avatar = new gameObject();
+  avatar.color = `blue`;
+  avatar.vx = 2;
+  avatar.vy = 2; 
+
+ 
+
 
 function main()
 {
@@ -32,6 +36,8 @@ function main()
     collision detection ALWAYS goes before the render and...
     usually goes after the movement of the objects
     ---------------------------------------------------*/
+    ctx.drawImage(avatar, avatar.x - avatar.w / 2, avatar.y - avatar.h / 2, avatar.w, avatar.h);
+
 
     //Keeps avatar on screen
     if(avatar.x < 0 + avatar.w/2){avatar.x = 0 + avatar.w/2;}
