@@ -17,24 +17,7 @@ avatar.color = `#ff0099`;
 avatar.vx = 2;
 avatar.vy = 2;
 
-
-
-function updateGameArea() {
-     var x, height, gap, minHeight, maxHeight, minGap, maxGap;
-    // if interacted with enemy stop game
-     for (i = 0; i < myObstacles.length; i += 1) {
-         if (myGamePiece.crashWith(myObstacles[i])) {
-          myGameArea.stop();
-          return;
-        }
-      }
-
-    //the enemy
-    // myObstacles.push(new component(10, height, "green", x, 0));
-    // myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
-
-
-    function main()
+function main()
 {
     //erases the screen
     ctx.clearRect(0,0,c.width,c.height); 
@@ -60,4 +43,3 @@ function updateGameArea() {
 
 
 
-}

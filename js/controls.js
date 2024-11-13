@@ -5,7 +5,7 @@ Booleans to store whether a specific button is pressed or not
  var a = false;
  var s = false;
  var d = false;
- var m1 = false;
+ 
  
  /*---Key Press Code-----------*/
  
@@ -29,10 +29,3 @@ Booleans to store whether a specific button is pressed or not
      if(e.keyCode == 68){d = false;}
  }
  
- element.addEventListener('click', function(event) {
-    // Check if the left button was clicked
-    if (event.button === 0) {
-      // Your code to handle the left click
-      console.log('Left click detected');
-    }
-  });
