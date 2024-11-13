@@ -1,3 +1,5 @@
+let canvas;
+let context;
 /*-------------------------------------------
 Game Setup
  1. canvas 
@@ -5,15 +7,14 @@ Game Setup
  3. frame rate
  4. animation timer runs main function 60 frames per second
 -------------------------------------------*/
-var c = document.querySelector(`MyCanvas`)
-var ctx = c.getContext(`2d`)
-var fps = 1000/60
-var timer = setInterval(main, fps)
-
+canvas = document.getElementById(`myCanvas`);
+context = canvas.getContext(`2d`);
+var fps = 1000/60;
+var timer = setInterval(main, fps);
 
 
   //avatar but doesn't work
-  var avatar = new gameObject();
+  var avatar = new GameObject();
   avatar.color = `blue`;
   avatar.vx = 2;
   avatar.vy = 2; 
@@ -24,7 +25,7 @@ var timer = setInterval(main, fps)
 function main()
 {
     //erases the screen
-    ctx.clearRect(0,0,c.width,c.height); 
+    context.clearRect(0,0,canvas.width,canvas.height); 
 
     //moves the player if the variables in the controls.js are equal to true
     if(d==true){ avatar.x += avatar.vx; }
@@ -36,14 +37,16 @@ function main()
     collision detection ALWAYS goes before the render and...
     usually goes after the movement of the objects
     ---------------------------------------------------*/
-    ctx.drawImage(avatar, avatar.x - avatar.w / 2, avatar.y - avatar.h / 2, avatar.w, avatar.h);
+    context.drawImage(avatar, avatar.x - avatar.w / 2, avatar.y - avatar.h / 2, avatar.w, avatar.h); 
 
 
     //Keeps avatar on screen
     if(avatar.x < 0 + avatar.w/2){avatar.x = 0 + avatar.w/2;}
-    if(avatar.x > c.width + -avatar.w/2){avatar.x = c.width + -avatar.w/2;}
+    if(avatar.x > canvas.width + -avatar.w/2){avatar.x = canvas.width + -avatar.w/2;}
     if(avatar.y < 0 + avatar.h/2){avatar.y = 0 + avatar.h/2;}
-    if(avatar.y > c.height + -avatar.h/2){avatar.y = c.height + -avatar.h/2;} 
+    if(avatar.y > canvas.height + -avatar.h/2){avatar.y = canvas.height + -avatar.h/2;}
+
+    avatar.render();
 }
 
 

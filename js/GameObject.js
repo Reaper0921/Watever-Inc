@@ -4,8 +4,8 @@ class GameObject
     {
     /*Object properties (or attributes)*/
     //object position
-     this.x=c.width/2;
-     this.y=c.height/2;
+     this.x=canvas.width/2;
+     this.y=canvas.height/2;
      //object angle
      this.angle = 0;
      //object dimensions
@@ -21,12 +21,12 @@ class GameObject
     //Draws a rectangle 
     render()
     {
-        ctx.save();
-            ctx.fillStyle = this.color
-            ctx.translate(this.x, this.y)
-            ctx.rotate(this.angle*Math.PI/180)
-            ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h)
-        ctx.restore();
+        context.save();
+        context.fillStyle = this.color
+        context.translate(this.x, this.y)
+        context.rotate(this.angle*Math.PI/180)
+        context.fillRect(-this.w/2, -this.h/2, this.w, this.h)
+        context.restore();
     }
 
     //Moves an object by adding it's velocity to it's position on each axis
