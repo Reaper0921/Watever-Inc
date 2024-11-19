@@ -15,7 +15,7 @@ class GameObject
      this.vx=0;
      this.vy=0;
     //object color
-     this.color = `hotpink`  
+     this.color = `green`  
     }
 
     //Draws a rectangle 
@@ -32,8 +32,8 @@ class GameObject
     //Moves an object by adding it's velocity to it's position on each axis
     move()
     {
-        this.x = this.x + this.vx
-        this.y = this.y + this.vy
+        this.x = this.x + this.vx;
+        this.y = this.y + this.vy;
     }
 
     //Each function below returns a sides of this object's bounding box
@@ -43,15 +43,15 @@ class GameObject
     }
     bottom()
     {
-        return this.y + this.h/2
+        return this.y + this.h/2;
     }
     left()
     {
-        return this.x - this.w/2
+        return this.x - this.w/2;
     }
     right()
     {
-        return this.x + this.w/2
+        return this.x + this.w/2;
     }
 
     /*-------Collision Function ----------------
@@ -71,5 +71,22 @@ class GameObject
             return true
         }
         return false;
+    }
+    Enemy()
+    {
+    /*Object properties (or attributes)*/
+    //object position
+    this.x=canvas.width/2;
+    this.y=canvas.height/2;
+    //object angle
+    this.angle = 0;
+    //object dimensions
+    this.w=10;
+    this.h=10;
+    //object velocity
+    this.vx=0;
+    this.vy=0;
+   //object color
+    this.color = `green` 
     }
 }
