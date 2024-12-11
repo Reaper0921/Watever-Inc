@@ -1,30 +1,300 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/styles.css">
 
-</head>
-<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>2D Fantasy Game</title>
+        <style>
+            body { margin: 0; padding: 0; }
+            canvas { display: block; background-color: #333; }
+            #hud { position: absolute; top: 20px; left: 20px; color: white; font-family: Arial, sans-serif; }
+        </style>
+    </head>
+    <body>
+    
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="hud">
+        <div>Health: <span id="health"></span></div>
+        <div>Mana: <span id="mana"></span></div>
+        <div>Level: <span id="level"></span></div>
+        <div>XP: <span id="xp"></span></div>
+        <div>Gold: <span id="gold"></span></div>
+    
+    </div>
+    <script>
+const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        const tileSize = 32;
+        const player = {
+            x: 100,
+            y: 100,
+            width: 32,
+            height: 32,
+            speed: 5,
+            health: 100,
+            mana: 50,
+            maxHealth: 100,
+            maxMana: 50,
+            level: 1,
+            xp: 0,
+            xpToLevelUp: 100,
+            gold: 0,
+            stats: {
+                strength: 5,
+                agility: 5,
+                intelligence: 5
+            },
+            inventory: []
+        };
+        
+        const enemies = [
+            { x: 400, y: 200, width: 32, height: 32, health: 30, maxHealth: 30, damage: 5 },
+            { x: 500, y: 300, width: 32, height: 32, health: 50, maxHealth: 50, damage: 8 }
+        ];
+        
+        let lastTime = 0;
+        let keys = {};
+        
+        // Game loop
+        function gameLoop(timestamp) {
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+            // Handle combat
+    combat();
 
-<h1> Game test</h1>
-<!--<h3>Creators: <a href="https://mybio-week1assignment.netlify.app/"><b>Jalen</b></a><a href="https://neit-jeremy-2024.netlify.app"><b>Jeremy</b></a><a href="https://neit-darin-2024.netlify.app/"><b>Darin</b></a></h3>
--->
+            updateGame(deltaTime);
+            renderGame();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function updateGame(deltaTime) {
+            handleInput();
+            movePlayer();
+            checkCollisions();
+            updateStats();
+            //checkLevelUp();
+        }
+        
+        function renderGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw player
+            ctx.fillStyle = "green";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        
+            // Draw enemies
+            ctx.fillStyle = "red";
+            enemies.forEach(enemy => {
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+            });
+        
+            // Draw health and mana bars
+            drawHealthBar();
+            drawManaBar();
+            drawLevelBar();
+        
+            // Update HUD
+            document.getElementById("health").textContent = player.health;
+            document.getElementById("mana").textContent = player.mana;
+            document.getElementById("level").textContent = player.level;
+            document.getElementById("xp").textContent = player.xp;
+            document.getElementById("gold").textContent = player.gold;
+        }
+        
+        // Handle player input (movement and abilities)
+        function handleInput() {
+            if (keys["ArrowUp"]) player.y -= player.speed;
+            if (keys["ArrowDown"]) player.y += player.speed;
+            if (keys["ArrowLeft"]) player.x -= player.speed;
+            if (keys["ArrowRight"]) player.x += player.speed;
+        }
+        
+        function movePlayer() {
+            // Boundary check
+            player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+            player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
+        }
+        
+        function checkCollisions() {
+            enemies.forEach(enemy => {
+                if (player.x < enemy.x + enemy.width &&
+                    player.x + player.width > enemy.x &&
+                    player.y < enemy.y + enemy.height &&
+                    player.y + player.height > enemy.y) {
+                    // Player collides with enemy
+                    player.health -= 5;
+                    if (player.health <= 0) gameOver();
+                }
+            });
+        }
+        
+        function gameOver() {
+            alert("Game Over!");
+            player.health = player.maxHealth;
+            player.x = 100;
+            player.y = 100;
+            player.level = 1;
+            player.xp = 0;
+            player.gold = 0;
+        }
+        
+        function updateStats() {
+            if (player.xp >= player.xpToLevelUp) {
+                player.xp -= player.xpToLevelUp;
+                player.level++;
+                player.xpToLevelUp *= 1.2;
+                player.health = player.maxHealth;
+                player.mana = player.maxMana;
+                player.stats.strength++;
+                player.stats.agility++;
+                player.stats.intelligence++;
+            }
+        }
+        
+        function drawHealthBar() {
+            const healthPercentage = player.health / player.maxHealth;
+            ctx.fillStyle = "red";
+            ctx.fillRect(20, 20, 200 * healthPercentage, 20);
+        }
+        
+        function drawManaBar() {
+            const manaPercentage = player.mana / player.maxMana;
+            ctx.fillStyle = "blue";
+            ctx.fillRect(20, 50, 200 * manaPercentage, 20);
+        }
+        
+        function drawLevelBar() {
+            const levelPercentage = player.xp / player.xpToLevelUp;
+            ctx.fillStyle = "purple";
+            ctx.fillRect(20, 80, 200 * levelPercentage, 20);
+        }
+        
+        // Event listeners for input
+        window.addEventListener("keydown", (e) => keys[e.key] = true);
+        window.addEventListener("keyup", (e) => keys[e.key] = false);
+        
+        // Start the game loop
+        // Combat function
+function combat() {
+    // Player attacks an enemy
+    enemies.forEach(enemy => {
+        // Check if the player is close enough to attack the enemy
+        if (player.x < enemy.x + enemy.width &&
+            player.x + player.width > enemy.x &&
+            player.y < enemy.y + enemy.height &&
+            player.y + player.height > enemy.y) {
 
+            // Player attacks the enemy
+            let damageToEnemy = player.stats.strength; // Use strength stat to calculate damage
+            enemy.health -= damageToEnemy;
+            console.log(`Player attacks! Enemy health: ${enemy.health}`);
 
+            // Check if enemy is dead
+            if (enemy.health <= 0) {
+                console.log(`Enemy defeated!`);
+                dropLoot(enemy);
+                removeEnemy(enemy);
+            }
+        }
+    });
 
-    <canvas id="myCanvas" width="1000" height="925"></canvas>
+    // Enemies attack the player
+    enemies.forEach(enemy => {
+        // Check if the enemy is close enough to attack the player
+        if (player.x < enemy.x + enemy.width &&
+            player.x + player.width > enemy.x &&
+            player.y < enemy.y + enemy.height &&
+            player.y + player.height > enemy.y) {
 
+            // Enemy attacks the player
+            let damageToPlayer = enemy.damage; // Enemy's damage value
+            player.health -= damageToPlayer;
+            console.log(`Enemy attacks! Player health: ${player.health}`);
 
+            // Check if player is dead
+            if (player.health <= 0) {
+                console.log("Player is dead!");
+                gameOver();
+            }
+        }
+    });
+}
 
-        <!--controls.js contains the keyboard events and variables for movement-->
-        <script src="js/Controls.js"></script>
-                <!--game.js is the game-->
-                <script src="js/Game.js"></script>
-        <!--GameObject.js contains the game object class we will use or all objects in the game-->
-        <script src="js/GameObject.js"></script>
+// Function to remove an enemy when it dies
+function removeEnemy(enemy) {
+    const index = enemies.indexOf(enemy);
+    if (index > -1) {
+        enemies.splice(index, 1); // Remove enemy from the array
+    }
+}
 
+// Function to drop loot when an enemy is defeated (like gold, items)
+function dropLoot(enemy) {
+    // Example: the enemy drops gold
+    const lootAmount = Math.floor(Math.random() * 10) + 5; // Random gold drop
+    player.gold += lootAmount;
+    console.log(`You received ${lootAmount} gold!`);
+}
 
-</body>
+// Game over function
+function gameOver() {
+    alert("Game Over!");
+    // Reset game state (for now, just reset health)
+    player.health = player.maxHealth;
+    player.x = 100;
+    player.y = 100;
+    player.level = 1;
+    player.xp = 0;
+    player.gold = 0;
+    enemies.length = 0; // Clear remaining enemies
+}
+function useAbility(ability) {
+    if (ability === "fireball") {
+        if (player.mana >= 20) {
+            // Fireball deals damage to all enemies
+            player.mana -= 20; // Fireball consumes 20 mana
+            console.log("Casting Fireball!");
+
+            enemies.forEach(enemy => {
+                let fireballDamage = player.stats.intelligence * 2; // Damage based on intelligence
+                enemy.health -= fireballDamage;
+                console.log(`Fireball hits! Enemy health: ${enemy.health}`);
+
+                // Check if the enemy is dead after taking damage
+                if (enemy.health <= 0) {
+                    console.log("Enemy defeated by Fireball!");
+                    dropLoot(enemy);
+                    removeEnemy(enemy);
+                }
+            });
+        } else {
+            console.log("Not enough mana for Fireball!");
+        }
+    }
+
+    if (ability === "heal") {
+        if (player.mana >= 10) {
+            // Heal the player
+            player.mana -= 10; // Heal ability consumes 10 mana
+            let healAmount = player.stats.intelligence * 1.5; // Heal amount based on intelligence
+            player.health = Math.min(player.maxHealth, player.health + healAmount); // Heal without exceeding max health
+            console.log(`You healed for ${healAmount} HP! Player health: ${player.health}`);
+        } else {
+            console.log("Not enough mana for Heal!");
+        }
+    }
+}
+window.addEventListener("keydown", (e) => {
+    if (e.key === "1") {
+        useAbility("fireball");
+    }
+    if (e.key === "2") {
+        useAbility("heal");
+    }
+});
+        requestAnimationFrame(gameLoop);
+
+    </script>
 </html>
